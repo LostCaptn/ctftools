@@ -6,17 +6,17 @@ Convert binary octets into decimal
 
 
 def options():
-    print("Please choose from the following options:\n 1. Base64 Encoder\n 2. Base64 decoder \n 3.ipv4bin2dec\n 4.Exit")
+    print("Please choose from the following options:\n 1. Base64 \n 2. ipv4bin2dec \n 3. Substitution Cipher \n 4.Exit")
     while True:
         option = input("\nEnter a number: ")
         if option == "1":
-            base64encoder()
+            base64main()
             uestools()
         elif option == "2":
-            base64decoder()
+            ipv4decoder()
             uestools()
         elif option == "3":
-            ipv4decoder()
+            subciphermain()
             uestools()
         elif option == "4":
             break
@@ -67,6 +67,20 @@ def base64encoder():
 
         print(f"Encoded string: {base64_string}")
 
+def base64main():
+    action = input("Choose an option: \n 1. Encode \n 2. Decode \n 3. Exit \n")
+    if action == "1":
+        base64encoder()
+        base64main()
+    elif action == "2":
+        base64decoder()
+        base64main()
+    elif action == "3":
+        print("Goodbye")
+    else:
+        print("I'm sorry, that's not a valid option.")
+        base64main()
+
 
 def ipv4decoder():
     new_octet = octetfix() #assigns the output to a variable
@@ -99,6 +113,100 @@ def octetfix(): #validates the input
 def convert2decimal(new_octet):
     new_dec = int(new_octet, 2) #converts the binary to decimal form using int()
     return new_dec #returns the input to pass on for printing
+
+def subbruteforce():
+    letters = "abcdefghijklmnopqrstuvwxyz"
+    x = 0
+    enc_string = input("Enter the string to be decoded: ")
+    # while loop to increment x by 1 each iteration, to test all 25 possibilities
+    while x < 26:
+        x += 1
+        stringtodecrypt = enc_string
+        stringtodecrypt = stringtodecrypt.lower()
+        ciphershift = int(x)
+        stringdecrypted = ""
+        # for loop to convert the letter in the input to a number
+        for character in stringtodecrypt:
+            position = letters.find(character)
+            # sets the position of the desired letter by taking away the value of x from the position
+            newposition = position - ciphershift
+            # if the character is contained in letters, then we add that letter to our decrypted string
+            # by passing it the new position
+            if character in letters:
+                stringdecrypted = stringdecrypted + letters[newposition]
+            # if the input character is not within letters, we add it to the string as normal
+            else:
+                stringdecrypted = stringdecrypted + character
+        print(f"You used a substitution of {ciphershift}")
+        print(f"Your decrypted message is: {stringdecrypted}")
+
+def subkeydecript():
+    letters = "abcdefghijklmnopqrstuvwxyz"
+    enc_string = input("Enter the string to be decoded: ")
+    # while loop to set the value of the key
+    while True:
+        key = input("what key would you like to use: ")
+        stringtodecrypt = enc_string
+        stringtodecrypt = stringtodecrypt.lower()
+        ciphershift = int(key)
+        stringdecrypted = ""
+        # for loop to convert the letter in the input to a number
+        for character in stringtodecrypt:
+            position = letters.find(character)
+            # sets the position of the desired letter by taking away the value of key from the position
+            newposition = position - ciphershift
+            # if the character is contained in letters, then we add that letter to our decrypted string
+            # by passing it the new position
+            if character in letters:
+                stringdecrypted = stringdecrypted + letters[newposition]
+            # if the input character is not within letters, we add it to the string as normal
+            else:
+                stringdecrypted = stringdecrypted + character
+        print(f"You used a substitution of {ciphershift}")
+        print(f"Your decrypted message is: {stringdecrypted}")
+
+def subkeyencript():
+    letters = "abcdefghijklmnopqrstuvwxyz"
+    enc_string = input("Enter the string to be encoded: ")
+    # while loop to set the value of the key
+    while True:
+        key = input("what key would you like to use: ")
+        stringtoencrypt = enc_string
+        stringtoencrypt = stringtoencrypt.lower()
+        ciphershift = int(key)
+        stringencrypted = ""
+        # for loop to convert the letter in the input to a number
+        for character in stringtoencrypt:
+            position = letters.find(character)
+            # sets the position of the desired letter by taking away the value of key from the position
+            newposition = position - ciphershift
+            # if the character is contained in letters, then we add that letter to our decrypted string
+            # by passing it the new position
+            if character in letters:
+                stringencrypted = stringencrypted + letters[newposition]
+            # if the input character is not within letters, we add it to the string as normal
+            else:
+                stringencrypted = stringencrypted + character
+        print(f"You used a substitution of {ciphershift}")
+        print(f"Your encrypted message is: {stringencrypted}")
+
+def subciphermain():
+    action = input("Enter a Number: \n 1. Encode \n 2. Decode \n 3. Brute Force \n 4. Exit \n Option: ")
+    if action == "1":
+        subkeyencript()
+        subciphermain()
+    elif action == "2":
+        subkeydecript()
+        subciphermain()
+    elif action == "3":
+        subbruteforce()
+        subciphermain()
+    elif action == "4":
+        print("Goodbye")
+    else:
+        print("I'm sorry, that's not a valid option.")
+        subciphermain()
+
 
 def uestools():
     while True:
