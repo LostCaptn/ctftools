@@ -6,9 +6,17 @@ Convert binary octets into decimal
 
 
 def options():
-    print("Please choose from the following options:\n 1. Base64 \n 2. ipv4bin2dec \n 3. Substitution Cipher \n 4.Exit")
+    options = """
+    Please choose from the follow: \n
+    1. Base 64 \n
+    2. ipv4bin2dec \n
+    3. Substitution Cipher \n
+    4. Hex2dec \n
+    5. Exit \n
+    """
+    print(options)
     while True:
-        option = input("\nEnter a number: ")
+        option = input("Enter a number: ")
         if option == "1":
             base64main()
             uestools()
@@ -19,6 +27,9 @@ def options():
             subciphermain()
             uestools()
         elif option == "4":
+            hexmain()
+            uestools()
+        elif option == "5":
             break
         else:
             print("I'm sorry, that option isn't available right now")
@@ -193,6 +204,7 @@ def subkeyencript():
         print(f"You used a substitution of {ciphershift}")
         print(f"Your encrypted message is: {stringencrypted}")
         break
+
 def subciphermain():
     action = input("Enter a Number: \n 1. Encode \n 2. Decode \n 3. Brute Force \n 4. Exit \n Option: ")
     if action == "1":
@@ -210,6 +222,48 @@ def subciphermain():
         print("I'm sorry, that's not a valid option.")
         subciphermain()
 
+def hexvalidator():
+    while True:
+        hex_string = input("Enter a hexadecimal number string: ")
+        temp = hex_string
+        hex_string = hex_string.replace(".", " ")
+        hex_string = hex_string.replace(" ", "")
+        hex_string = hex_string.lower()
+        try:
+            hextest = int(hex_string, 16) #verifies that the string can convert to binary
+            hex_string = temp
+            break
+        except ValueError:
+            print("That is not a hex number, please input only hex.")
+    return hex_string  # returns our input to pass on later
+
+def hex2dec(new_hex):
+    library = "0123456789abcdef"
+    dec_string = ""
+    hex_string = new_hex
+    hex_string = hex_string.replace(".", " ")
+    print(hex_string)  # checker
+    temp = ""
+    for i in hex_string:
+        if i in library:
+            temp = temp + i
+            hex_string = hex_string.replace(i, "", 1)
+        if i not in library:
+            temp = int(temp, 16)
+            dec_string = dec_string + str(temp)
+            dec_string = dec_string + " "
+            temp = ""
+            hex_string = hex_string.replace(" ", "", 1)
+        if hex_string == "":
+            temp = int(temp, 16)
+            dec_string = dec_string + str(temp)
+            break
+    return dec_string
+
+def hexmain():
+    new_hex = hexvalidator()
+    dec_string = hex2dec(new_hex)
+    print("Hex value in decimal: ", dec_string)
 
 def uestools():
     while True:
