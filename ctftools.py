@@ -164,6 +164,7 @@ def subkeydecript():
                 stringdecrypted = stringdecrypted + character
         print(f"You used a substitution of {ciphershift}")
         print(f"Your decrypted message is: {stringdecrypted}")
+        break
 
 def subkeyencript():
     letters = "abcdefghijklmnopqrstuvwxyz"
@@ -179,9 +180,11 @@ def subkeyencript():
         for character in stringtoencrypt:
             position = letters.find(character)
             # sets the position of the desired letter by taking away the value of key from the position
-            newposition = position - ciphershift
+            newposition = position + ciphershift
             # if the character is contained in letters, then we add that letter to our decrypted string
             # by passing it the new position
+            if newposition > 25:
+                newposition = newposition - 26
             if character in letters:
                 stringencrypted = stringencrypted + letters[newposition]
             # if the input character is not within letters, we add it to the string as normal
@@ -189,7 +192,7 @@ def subkeyencript():
                 stringencrypted = stringencrypted + character
         print(f"You used a substitution of {ciphershift}")
         print(f"Your encrypted message is: {stringencrypted}")
-
+        break
 def subciphermain():
     action = input("Enter a Number: \n 1. Encode \n 2. Decode \n 3. Brute Force \n 4. Exit \n Option: ")
     if action == "1":
