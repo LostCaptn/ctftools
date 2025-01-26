@@ -3,33 +3,56 @@ Christian Nelson
 22 Jan 2025
 Convert binary octets into decimal
 """
+import base64
+banner = r"""
+_______________________________ ________                          .___            
+\_   ___ \__    ___/\_   _____/ \______ \   ____   ____  ____   __| _/___________ 
+/    \  \/ |    |    |    __)    |    |  \_/ __ \_/ ___\/  _ \ / __ |/ __ \_  __ \
+\     \____|    |    |     \     |    `   \  ___/\  \__(  <_> ) /_/ \  ___/|  | \/
+ \______  /|____|    \___  /    /_______  /\___  >\___  >____/\____ |\___  >__|   
+        \/               \/             \/     \/     \/           \/    \/       by Christian Nelson
+"""
 
 
 def options():
     options = """
-    Please choose from the follow: \n
-    1. Base 64 \n
-    2. ipv4bin2dec \n
-    3. Substitution Cipher \n
-    4. Hex2dec \n
-    5. Exit \n
+    Please choose from the follow:
+    1. base32
+    2. base64
+    3. ipv4bin2dec
+    4. Substitution Cipher
+    5. Hexadecimal
+    6. Rot(N)
+    7. Exit
     """
     print(options)
     while True:
         option = input("Enter a number: ")
         if option == "1":
+            base32main()
+            uestools()
+            break
+        elif option == "2":
             base64main()
             uestools()
-        elif option == "2":
+            break
+        elif option == "3":
             ipv4decoder()
             uestools()
-        elif option == "3":
+            break
+        elif option == "4":
             subciphermain()
             uestools()
-        elif option == "4":
+            break
+        elif option == "5":
             hexmain()
             uestools()
-        elif option == "5":
+            break
+        elif option == "6":
+            rot47main()
+            uestools()
+            break
+        elif option == "7":
             break
         else:
             print("I'm sorry, that option isn't available right now")
@@ -38,22 +61,19 @@ def options():
 
 
 def base64decoder():
-    import base64
-    import binascii
-
     while True:
-        base_64 = input("Enter the base64 string: ")
+        string = input("Enter the base64 string: ")
         try:
             # decode the input from base64 to ascii text
-            base_64_bytes = base_64.encode("ascii")
-            sample_bytes = base64.b64decode(base_64_bytes)
+            string_bytes = string.encode("ascii")
+            sample_bytes = base64.b64decode(string_bytes)
             sample = sample_bytes.decode("ascii")
             # encode the decoded message again back to base64
             sample_string_bytes = sample.encode("ascii")
             base64_bytes = base64.b64encode(sample_string_bytes)
             base64_string = base64_bytes.decode("ascii")
             # check if the base64 encoded message matches the original message
-            if base_64 == base64_string:
+            if string == base64_string:
                 #if it is, then we decode the message again and print it in human-readable form
                 print("The input is base64")
                 base64_string_bytes = base64_string.encode("ascii")
@@ -62,18 +82,16 @@ def base64decoder():
                 print(sample)
                 break
         # avoids the program erroring out because the input isn't base64
-        except binascii.Error :
-            print("The input is not base64")
+        except Exception as e:
+            print(f"The input is not base64. The error was {e}")
 
 def base64encoder():
-    import base64
-    #courtesy of GeeksforGeeks.org
     while True:
         #gets input, turns into bytes
-        sample_string = input("Enter the phrase you would like to encode: ")
-        sample_string_bytes = sample_string.encode("ascii")
+        string = input("Enter the phrase you would like to encode: ")
+        string_bytes = string.encode("ascii")
         #encodes it, then makes it readable base64
-        base64_bytes = base64.b64encode(sample_string_bytes)
+        base64_bytes = base64.b64encode(string_bytes)
         base64_string = base64_bytes.decode("ascii")
 
         print(f"Encoded string: {base64_string}")
@@ -91,6 +109,32 @@ def base64main():
     else:
         print("I'm sorry, that's not a valid option.")
         base64main()
+
+def base32decoder(string):
+    while True:
+        print(string) #debug
+        if string == "":
+            print("Invalid")
+            break
+        try:
+           return base64.b32decode(string).decode()
+
+        except Exception as e:
+            print(f"Error\nYour string is not base32: {e}")
+            break
+    while True:
+        action = input("Would you like to enter another string? Y/n: ")
+        if action == "Y":
+            base32main()
+        elif action == 'n':
+            break
+        else:
+            print("Invalid response")
+
+def base32main():
+    string = input("Enter a base32 string to decode: ")
+    decoded = base32decoder(string)
+    print(f"Your base32 string decoded is: {decoded}")
 
 
 def ipv4decoder():
@@ -224,7 +268,7 @@ def subciphermain():
 
 def hexvalidator():
     while True:
-        hex_string = input("Enter a hexadecimal number string: ")
+        hex_string = input("Enter a hexadecimal string: ")
         temp = hex_string
         hex_string = hex_string.replace(".", " ")
         hex_string = hex_string.replace(" ", "")
@@ -260,10 +304,60 @@ def hex2dec(new_hex):
             break
     return dec_string
 
+def hex2ascii(new_hex):
+    library = "0123456789abcdef"
+    dec_string = ""
+    hex_string = new_hex
+    hex_string = hex_string.replace(".", " ")
+    print(hex_string)  # checker
+    temp = ""
+    for i in hex_string:
+        if i in library:
+            temp = temp + i
+            hex_string = hex_string.replace(i, "", 1)
+        if i not in library:
+            temp = chr(int(temp, 16))
+            dec_string = dec_string + str(temp)
+            temp = ""
+            hex_string = hex_string.replace(" ", "", 1)
+        if hex_string == "":
+            temp = chr(int(temp, 16))
+            dec_string = dec_string + str(temp)
+            break
+    return dec_string
+
+
 def hexmain():
-    new_hex = hexvalidator()
-    dec_string = hex2dec(new_hex)
-    print("Hex value in decimal: ", dec_string)
+    print("Choose from the following options:\n 1. Hex to Decimal\n 2. Hex to ASCII\n")
+    option = input("Enter a number: ")
+    if option == "1":
+        new_hex = hexvalidator()
+        dec_string = hex2dec(new_hex)
+        print("Hex value in decimal: ", dec_string)
+    elif option == "2":
+        new_hex = hexvalidator()
+        ascii_string = hex2ascii(new_hex)
+        print("Hex value in ASCII: ", ascii_string)
+
+def rot47Decode():
+    string = input("Enter a ROT47 string: ")
+    try:
+        x = []
+        for i in range(len(string)):  # access characters by index
+            j = ord(string[i])  # set j to the corresponding ordinal number
+            if j >= 33 and j <= 126:  # checks for ROT47 range
+                # Subtract 47 for decoding and use modulo 94 for wrapping
+                x.append(chr(33 + ((j - 47 - 33) % 94)))
+            else:
+                x.append(string[i])  #adds non ROT47 characters without changes
+        return ''.join(x)  # turns the list into a string
+
+    except Exception as e:
+        return f"Exception: {e}"
+
+def rot47main():
+    string = rot47Decode()
+    print("Your message is :",string)
 
 def uestools():
     while True:
@@ -274,7 +368,7 @@ def uestools():
             break
 
 
-
+print(banner)
 options()
 
 
