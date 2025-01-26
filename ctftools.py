@@ -4,6 +4,7 @@ Christian Nelson
 Convert binary octets into decimal
 """
 import base64
+import codecs
 banner = r"""
 _______________________________ ________                          .___            
 \_   ___ \__    ___/\_   _____/ \______ \   ____   ____  ____   __| _/___________ 
@@ -49,7 +50,7 @@ def options():
             uestools()
             break
         elif option == "6":
-            rot47main()
+            rotNmain()
             uestools()
             break
         elif option == "7":
@@ -112,7 +113,6 @@ def base64main():
 
 def base32decoder(string):
     while True:
-        print(string) #debug
         if string == "":
             print("Invalid")
             break
@@ -339,6 +339,17 @@ def hexmain():
         ascii_string = hex2ascii(new_hex)
         print("Hex value in ASCII: ", ascii_string)
 
+def rot13Decode(string):
+    try:
+        return codecs.encode(string, 'rot13')
+    except Exception as e:
+        return f"Invalid Input: {e}"
+
+def rot13main():
+    string = input("Enter a string to encode/decode: ")
+    result = rot13Decode(string)
+    print(f"Your message is: {result}")
+
 def rot47Decode():
     string = input("Enter a ROT47 string: ")
     try:
@@ -346,7 +357,7 @@ def rot47Decode():
         for i in range(len(string)):  # access characters by index
             j = ord(string[i])  # set j to the corresponding ordinal number
             if j >= 33 and j <= 126:  # checks for ROT47 range
-                # Subtract 47 for decoding and use modulo 94 for wrapping
+                # decode left 47, account for negative 33, wrap %94
                 x.append(chr(33 + ((j - 47 - 33) % 94)))
             else:
                 x.append(string[i])  #adds non ROT47 characters without changes
@@ -358,6 +369,21 @@ def rot47Decode():
 def rot47main():
     string = rot47Decode()
     print("Your message is :",string)
+
+def rotNmain():
+    print("""
+    Please select from the following ROT Ciphers:
+    1. ROT13
+    2. ROT47
+    """)
+    while True:
+        choice = input("Enter a number:")
+        if choice == "1":
+            rot13main()
+        elif choice == "2":
+            rot47main()
+        else:
+            print("That is not a valid response")
 
 def uestools():
     while True:
