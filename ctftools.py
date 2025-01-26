@@ -274,7 +274,7 @@ def hexvalidator():
         hex_string = hex_string.replace(" ", "")
         hex_string = hex_string.lower()
         try:
-            hextest = int(hex_string, 16) #verifies that the string can convert to binary
+            hextest = int(hex_string, 16) #verifies that the string can convert to hex
             hex_string = temp
             break
         except ValueError:
@@ -375,6 +375,7 @@ def rotNmain():
     Please select from the following ROT Ciphers:
     1. ROT13
     2. ROT47
+    3. Exit
     """)
     while True:
         choice = input("Enter a number:")
@@ -382,6 +383,8 @@ def rotNmain():
             rot13main()
         elif choice == "2":
             rot47main()
+        elif choice == "3":
+            break
         else:
             print("That is not a valid response")
 
