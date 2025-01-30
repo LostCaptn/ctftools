@@ -48,7 +48,7 @@ def options():
             rotNmain()
             break
         elif option == "7":
-            break
+            return
         else:
             print("I'm sorry, that option isn't available right now")
         return
@@ -381,6 +381,5 @@ def uestools():
 
 print(banner)
 options()
-uestools()
 
 
