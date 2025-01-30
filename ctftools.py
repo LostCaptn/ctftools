@@ -16,7 +16,7 @@ _______________________________ ________                          .___
 
 
 def options():
-    options = """
+    menu = """
     Please choose from the follow:
     1. base32
     2. base64
@@ -28,7 +28,7 @@ def options():
     8. Exit
     """
     while True:
-        print(options)
+        print(menu)
         option = input("Enter a number: ")
         if option == "1":
             base32main()
@@ -46,7 +46,7 @@ def options():
             hexmain()
             break
         elif option == "6":
-            rotNmain()
+            rot_n_main()
             break
         elif option == "7":
             bruteforcermain()
@@ -54,6 +54,7 @@ def options():
             return
         else:
             print("I'm sorry, that option isn't available right now")
+    uestools()
 
 def bruteforcermain():
     string = input("Enter a string to be tested: ")
@@ -61,15 +62,24 @@ def bruteforcermain():
     print(f"Base32: {result}")
     result = base64decoder(string)
     print(f"Base64: {result}")
+    result = rot13decode(string)
+    print(f"ROT13: {result}")
+    result = rot47decode(string)
+    print(f"ROT47: {result}")
+    result = hex2dec(string)
+    print(f"Hex2dec: {result}")
+    result = hex2ascii(string)
+    print(f"Hex2ASCII: {result}")
     while True:
         action = input("Would you like to view the substitution brute force? Y/n: ")
-        if action == "Y" or "y":
+        if action in ["Y" , "y"]:
             subbruteforce(string)
+            break
         elif action == "n":
             break
         else:
             print("That's not a valid option")
-
+    return
 
 def base64decoder(string):
     try:
@@ -104,16 +114,17 @@ def base64main():
 
 def base32decoder(string):
     try:
-        return base64.b32decode(string).decode('ascii')
-
+        return base64.b32decode(string.encode('ascii')).decode('ascii')
     except Exception as e:
         return e
 
 def base32main():
-    string = input("Enter a base32 string to decode: ")
-    decoded = base32decoder(string)
-    print(f"Decoded string: {decoded}")
-    return
+    while True:
+        string = input("Enter a base32 string to decode: ")
+        decoded = base32decoder(string)
+        print(f"Decoded string: {decoded}")
+
+        return
 
 
 def ipv4decoder():
@@ -281,50 +292,53 @@ def hexvalidator():
             print("That is not a hex number, please input only hex.")
     return hex_string  # returns our input to pass on later
 
-def hex2dec(new_hex):
+def hex2dec(string):
     library = "0123456789abcdef"
     dec_string = ""
-    hex_string = new_hex
-    print("You enter: ", hex_string)
+    hex_string = string
     temp = ""
-    for i in hex_string:
-        if i in library:
-            temp = temp + i
-            hex_string = hex_string.replace(i, "", 1)
-        if i not in library:
-            temp = int(temp, 16)
-            dec_string = dec_string + str(temp)
-            dec_string = dec_string + i
-            temp = ""
-            hex_string = hex_string.replace(" ", "", 1)
-            hex_string = hex_string.replace(".", "", 1)
-        if hex_string == "":
-            temp = int(temp, 16)
-            dec_string = dec_string + str(temp)
+    try:
+        for i in hex_string:
+            if i in library:
+                temp = temp + i
+                hex_string = hex_string.replace(i, "", 1)
+            if i not in library:
+                temp = int(temp, 16)
+                dec_string = dec_string + str(temp)
+                dec_string = dec_string + i
+                temp = ""
+                hex_string = hex_string.replace(" ", "", 1)
+                hex_string = hex_string.replace(".", "", 1)
+            if hex_string == "":
+                temp = int(temp, 16)
+                dec_string = dec_string + str(temp)
+        return dec_string
+    except Exception as e:
+        return e
 
-    return dec_string
-
-def hex2ascii(new_hex):
+def hex2ascii(string):
     library = "0123456789abcdef"
     dec_string = ""
-    hex_string = new_hex
+    hex_string = string
     hex_string = hex_string.replace(".", " ")
-    print(hex_string)  # checker
     temp = ""
-    for i in hex_string:
-        if i in library:
-            temp = temp + i
-            hex_string = hex_string.replace(i, "", 1)
-        if i not in library:
-            temp = chr(int(temp, 16))
-            dec_string = dec_string + str(temp)
-            temp = ""
-            hex_string = hex_string.replace(" ", "", 1)
-        if hex_string == "":
-            temp = chr(int(temp, 16))
-            dec_string = dec_string + str(temp)
-            break
-    return dec_string
+    try:
+        for i in hex_string:
+            if i in library:
+                temp = temp + i
+                hex_string = hex_string.replace(i, "", 1)
+            if i not in library:
+                temp = chr(int(temp, 16))
+                dec_string = dec_string + str(temp)
+                temp = ""
+                hex_string = hex_string.replace(" ", "", 1)
+            if hex_string == "":
+                temp = chr(int(temp, 16))
+                dec_string = dec_string + str(temp)
+                break
+        return dec_string
+    except Exception as e:
+        return e
 
 
 def hexmain():
@@ -339,7 +353,7 @@ def hexmain():
         ascii_string = hex2ascii(new_hex)
         print("Hex value in ASCII: ", ascii_string)
 
-def rot13Decode(string):
+def rot13decode(string):
     try:
         return codecs.encode(string, 'rot13')
     except Exception as e:
@@ -347,15 +361,15 @@ def rot13Decode(string):
 
 def rot13main():
     string = input("Enter a string to encode/decode: ")
-    result = rot13Decode(string)
+    result = rot13decode(string)
     print(f"Your message is: {result}")
 
-def rot47Decode(string):
+def rot47decode(string):
     try:
         x = []
         for i in range(len(string)):  # access characters by index
             j = ord(string[i])  # set j to the corresponding ordinal number
-            if j >= 33 and j <= 126:  # checks for ROT47 range
+            if 33 <= j <= 126:  # checks for ROT47 range
                 # decode left 47, account for negative 33, wrap %94
                 x.append(chr(33 + ((j - 47 - 33) % 94)))
             else:
@@ -363,14 +377,14 @@ def rot47Decode(string):
         return ''.join(x)  # turns the list into a string
 
     except Exception as e:
-        return f"Exception: {e}"
+        return e
 
 def rot47main():
     string = input("Enter a ROT47 string: ")
-    result = rot47Decode(string)
+    result = rot47decode(string)
     print(f"Your message is: {result}")
 
-def rotNmain():
+def rot_n_main():
     print("""
     Please select from the following ROT Ciphers:
     1. ROT13
@@ -384,17 +398,18 @@ def rotNmain():
         elif choice == "2":
             rot47main()
         elif choice == "3":
-            break
+            return
         else:
             print("That is not a valid response")
 
 def uestools():
     while True:
         user_continue = input("Would you like to continue? Y/n: ")
-        if user_continue == "Y" or "y":
+        if user_continue in ["Y" , "y"]:
             options()
+            return
         elif user_continue == "n":
-            break
+            return
         else:
             print("Invalid option")
 
