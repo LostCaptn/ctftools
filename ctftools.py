@@ -24,10 +24,11 @@ def options():
     4. Substitution Cipher
     5. Hexadecimal
     6. Rot(N)
-    7. Exit
+    7. Brute Forcer (Will try every cipher)
+    8. Exit
     """
-    print(options)
     while True:
+        print(options)
         option = input("Enter a number: ")
         if option == "1":
             base32main()
@@ -48,10 +49,27 @@ def options():
             rotNmain()
             break
         elif option == "7":
+            bruteforcermain()
+        elif option == "8":
             return
         else:
             print("I'm sorry, that option isn't available right now")
-        return
+
+def bruteforcermain():
+    string = input("Enter a string to be tested: ")
+    result = base32decoder(string)
+    print(f"Base32: {result}")
+    result = base64decoder(string)
+    print(f"Base64: {result}")
+    while True:
+        action = input("Would you like to view the substitution brute force? Y/n: ")
+        if action == "Y" or "y":
+            subbruteforce(string)
+        elif action == "n":
+            break
+        else:
+            print("That's not a valid option")
+
 
 def base64decoder(string):
     try:
@@ -95,6 +113,7 @@ def base32main():
     string = input("Enter a base32 string to decode: ")
     decoded = base32decoder(string)
     print(f"Decoded string: {decoded}")
+    return
 
 
 def ipv4decoder():
@@ -135,7 +154,7 @@ def subbruteforce(string):
     counter = 0
     # while loop to increment x by 1 each iteration, to test all 25 possibilities
     try:
-        while counter < 26:
+        while counter < 25:
             counter += 1
             shift = int(counter)
             result = ""
@@ -156,6 +175,7 @@ def subbruteforce(string):
             if string == result:
                 result = "Not a substitution cipher."
                 print(result)
+                return
             else:
                 print(f"You used a substitution of {shift}")
                 print(f"Your decrypted message is: {result}")
