@@ -31,79 +31,52 @@ def options():
         option = input("Enter a number: ")
         if option == "1":
             base32main()
-            uestools()
             break
         elif option == "2":
             base64main()
-            uestools()
             break
         elif option == "3":
             ipv4decoder()
-            uestools()
             break
         elif option == "4":
             subciphermain()
-            uestools()
             break
         elif option == "5":
             hexmain()
-            uestools()
             break
         elif option == "6":
             rotNmain()
-            uestools()
             break
         elif option == "7":
             break
         else:
             print("I'm sorry, that option isn't available right now")
-            uestools()
         return
 
+def base64decoder(string):
+    try:
+        return base64.b64decode(string.encode('ascii')).decode('ascii')
+    except Exception as e:
+        return e
 
-def base64decoder():
-    while True:
-        string = input("Enter the base64 string: ")
-        try:
-            # decode the input from base64 to ascii text
-            string_bytes = string.encode("ascii")
-            sample_bytes = base64.b64decode(string_bytes)
-            sample = sample_bytes.decode("ascii")
-            # encode the decoded message again back to base64
-            sample_string_bytes = sample.encode("ascii")
-            base64_bytes = base64.b64encode(sample_string_bytes)
-            base64_string = base64_bytes.decode("ascii")
-            # check if the base64 encoded message matches the original message
-            if string == base64_string:
-                #if it is, then we decode the message again and print it in human-readable form
-                print("The input is base64")
-                base64_string_bytes = base64_string.encode("ascii")
-                sample_bytes = base64.b64decode(base64_string_bytes)
-                sample = sample_bytes.decode("ascii")
-                print(sample)
-                break
-        # avoids the program erroring out because the input isn't base64
-        except Exception as e:
-            print(f"The input is not base64. The error was {e}")
+def base64encoder(string):
+    try:
+        return base64.b64encode(string.encode("ascii")).decode('ascii')
+    except Exception as e:
+        return e
 
-def base64encoder():
-    while True:
-        #gets input, turns into bytes
-        string = input("Enter the phrase you would like to encode: ")
-        string_bytes = string.encode("ascii")
-        #encodes it, then makes it readable base64
-        base64_bytes = base64.b64encode(string_bytes)
-        base64_string = base64_bytes.decode("ascii")
-
-        print(f"Encoded string: {base64_string}")
 
 def base64main():
     action = input("Choose an option: \n 1. Encode \n 2. Decode \n 3. Exit \n")
     if action == "1":
-        base64encoder()
+        string = input("Enter the string to encode: ")
+        encoded = base64encoder(string)
+        print(f"Encoded string: {encoded}")
         base64main()
     elif action == "2":
-        base64decoder()
+        string = input("Enter the string to decode: ")
+        decoded = base64decoder(string)
+        print(f"Decoded string: {decoded}")
         base64main()
     elif action == "3":
         print("Goodbye")
@@ -112,29 +85,16 @@ def base64main():
         base64main()
 
 def base32decoder(string):
-    while True:
-        if string == "":
-            print("Invalid")
-            break
-        try:
-           return base64.b32decode(string).decode()
+    try:
+        return base64.b32decode(string).decode('ascii')
 
-        except Exception as e:
-            print(f"Error\nYour string is not base32: {e}")
-            break
-    while True:
-        action = input("Would you like to enter another string? Y/n: ")
-        if action == "Y":
-            base32main()
-        elif action == 'n':
-            break
-        else:
-            print("Invalid response")
+    except Exception as e:
+        return e
 
 def base32main():
     string = input("Enter a base32 string to decode: ")
     decoded = base32decoder(string)
-    print(f"Your base32 string decoded is: {decoded}")
+    print(f"Decoded string: {decoded}")
 
 
 def ipv4decoder():
@@ -169,96 +129,116 @@ def convert2decimal(new_octet):
     new_dec = int(new_octet, 2) #converts the binary to decimal form using int()
     return new_dec #returns the input to pass on for printing
 
-def subbruteforce():
-    letters = "abcdefghijklmnopqrstuvwxyz"
-    x = 0
-    enc_string = input("Enter the string to be decoded: ")
+def subbruteforce(string):
+    library = "abcdefghijklmnopqrstuvwxyz"
+    library_upper = library.upper()
+    counter = 0
     # while loop to increment x by 1 each iteration, to test all 25 possibilities
-    while x < 26:
-        x += 1
-        stringtodecrypt = enc_string
-        stringtodecrypt = stringtodecrypt.lower()
-        ciphershift = int(x)
-        stringdecrypted = ""
-        # for loop to convert the letter in the input to a number
-        for character in stringtodecrypt:
-            position = letters.find(character)
-            # sets the position of the desired letter by taking away the value of x from the position
-            newposition = position - ciphershift
-            # if the character is contained in letters, then we add that letter to our decrypted string
-            # by passing it the new position
-            if character in letters:
-                stringdecrypted = stringdecrypted + letters[newposition]
-            # if the input character is not within letters, we add it to the string as normal
+    try:
+        while counter < 26:
+            counter += 1
+            shift = int(counter)
+            result = ""
+            # for loop to convert the letter in the input to a number
+            for i in string:
+                position = library.find(i) # sets the position of the desired letter by taking away the value of counter from the position
+                new_letter = position - shift
+                upper_position = library_upper.find(i)
+                new_upper = upper_position - shift
+                # if the character is contained in letters, then we add that letter to our decrypted string
+                # by passing it the new position
+                if i in library:
+                    result = result + library[new_letter]
+                elif i in library_upper:
+                    result = result + library_upper[new_upper]
+                else:
+                    result = result + i # if the input character is not within letters, we add it to the string as normal
+            if string == result:
+                result = "Not a substitution cipher."
+                print(result)
             else:
-                stringdecrypted = stringdecrypted + character
-        print(f"You used a substitution of {ciphershift}")
-        print(f"Your decrypted message is: {stringdecrypted}")
+                print(f"You used a substitution of {shift}")
+                print(f"Your decrypted message is: {result}")
+    except Exception as e:
+        print(e)
 
-def subkeydecript():
-    letters = "abcdefghijklmnopqrstuvwxyz"
-    enc_string = input("Enter the string to be decoded: ")
-    # while loop to set the value of the key
-    while True:
-        key = input("what key would you like to use: ")
-        stringtodecrypt = enc_string
-        stringtodecrypt = stringtodecrypt.lower()
-        ciphershift = int(key)
-        stringdecrypted = ""
-        # for loop to convert the letter in the input to a number
-        for character in stringtodecrypt:
-            position = letters.find(character)
-            # sets the position of the desired letter by taking away the value of key from the position
-            newposition = position - ciphershift
-            # if the character is contained in letters, then we add that letter to our decrypted string
-            # by passing it the new position
-            if character in letters:
-                stringdecrypted = stringdecrypted + letters[newposition]
-            # if the input character is not within letters, we add it to the string as normal
+def subkeydecript(string):
+    library = "abcdefghijklmnopqrstuvwxyz"
+    library_upper = library.upper()
+    try:
+        while True:
+            key = input("Enter a key: ")
+            shift = int(key)
+            result = ""
+            for i in string:
+                position = library.find(i)
+                new_letter = position - shift
+                upper_position = library_upper.find(i)
+                new_upper = upper_position - shift
+                if i in library:
+                    result = result + library[new_letter]
+                elif i in library_upper:
+                    result = result + library_upper[new_upper]
+                else:
+                    result = result + i
+            if string == result:
+                result = "Not a substitution cipher."
+                return result
             else:
-                stringdecrypted = stringdecrypted + character
-        print(f"You used a substitution of {ciphershift}")
-        print(f"Your decrypted message is: {stringdecrypted}")
-        break
+                return key,result
+    except Exception as e:
+        return e
 
-def subkeyencript():
-    letters = "abcdefghijklmnopqrstuvwxyz"
-    enc_string = input("Enter the string to be encoded: ")
-    # while loop to set the value of the key
-    while True:
-        key = input("what key would you like to use: ")
-        stringtoencrypt = enc_string
-        stringtoencrypt = stringtoencrypt.lower()
-        ciphershift = int(key)
-        stringencrypted = ""
-        # for loop to convert the letter in the input to a number
-        for character in stringtoencrypt:
-            position = letters.find(character)
-            # sets the position of the desired letter by taking away the value of key from the position
-            newposition = position + ciphershift
-            # if the character is contained in letters, then we add that letter to our decrypted string
-            # by passing it the new position
-            if newposition > 25:
-                newposition = newposition - 26
-            if character in letters:
-                stringencrypted = stringencrypted + letters[newposition]
-            # if the input character is not within letters, we add it to the string as normal
+def subkeyencript(string):
+    library = "abcdefghijklmnopqrstuvwxyz"
+    library_upper = library.upper()
+    try:
+        while True:
+            key = input("Enter a key: ")
+            #string = string.lower()
+            shift = int(key)
+            result = ""
+            # for loop to convert the letter in the input to a number
+            for i in string:
+                position = library.find(i)
+                # sets the position of the desired letter by taking away the value of counter from the position
+                new_letter = position + shift
+                if new_letter > 25:
+                    new_letter = new_letter % 26
+                upper_position = library_upper.find(i)
+                new_upper = upper_position + shift
+                if new_upper > 25:
+                    new_upper = new_upper % 26
+                # if the character is contained in letters, then we add that letter to our decrypted string
+                # by passing it the new position
+                if i in library:
+                    result = result + library[new_letter]
+                # if the input character is not within letters, we add it to the string as normal
+                elif i in library_upper:
+                    result = result + library_upper[new_upper]
+                else:
+                    result = result + i
+            if string == result:
+                result = "Not a substitution cipher."
+                return result
             else:
-                stringencrypted = stringencrypted + character
-        print(f"You used a substitution of {ciphershift}")
-        print(f"Your encrypted message is: {stringencrypted}")
-        break
+                return key,result
+    except Exception as e:
+        return e
 
 def subciphermain():
+    string = input("Enter the string: ")
     action = input("Enter a Number: \n 1. Encode \n 2. Decode \n 3. Brute Force \n 4. Exit \n Option: ")
     if action == "1":
-        subkeyencript()
+        result = subkeyencript(string)
+        print(f"Your encrypted message: {result}")
         subciphermain()
     elif action == "2":
-        subkeydecript()
+        result = subkeydecript(string)
+        print(f"Your decrypted message is: {result}")
         subciphermain()
     elif action == "3":
-        subbruteforce()
+        subbruteforce(string)
         subciphermain()
     elif action == "4":
         print("Goodbye")
@@ -285,8 +265,7 @@ def hex2dec(new_hex):
     library = "0123456789abcdef"
     dec_string = ""
     hex_string = new_hex
-    hex_string = hex_string.replace(".", " ")
-    print(hex_string)  # checker
+    print("You enter: ", hex_string)
     temp = ""
     for i in hex_string:
         if i in library:
@@ -295,13 +274,14 @@ def hex2dec(new_hex):
         if i not in library:
             temp = int(temp, 16)
             dec_string = dec_string + str(temp)
-            dec_string = dec_string + " "
+            dec_string = dec_string + i
             temp = ""
             hex_string = hex_string.replace(" ", "", 1)
+            hex_string = hex_string.replace(".", "", 1)
         if hex_string == "":
             temp = int(temp, 16)
             dec_string = dec_string + str(temp)
-            break
+
     return dec_string
 
 def hex2ascii(new_hex):
@@ -350,8 +330,7 @@ def rot13main():
     result = rot13Decode(string)
     print(f"Your message is: {result}")
 
-def rot47Decode():
-    string = input("Enter a ROT47 string: ")
+def rot47Decode(string):
     try:
         x = []
         for i in range(len(string)):  # access characters by index
@@ -367,8 +346,9 @@ def rot47Decode():
         return f"Exception: {e}"
 
 def rot47main():
-    string = rot47Decode()
-    print("Your message is :",string)
+    string = input("Enter a ROT47 string: ")
+    result = rot47Decode(string)
+    print(f"Your message is: {result}")
 
 def rotNmain():
     print("""
@@ -391,14 +371,16 @@ def rotNmain():
 def uestools():
     while True:
         user_continue = input("Would you like to continue? Y/n: ")
-        if user_continue == "Y":
+        if user_continue == "Y" or "y":
             options()
         elif user_continue == "n":
             break
+        else:
+            print("Invalid option")
 
 
 print(banner)
 options()
-
+uestools()
 
 
