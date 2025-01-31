@@ -92,14 +92,26 @@ def hexvalidator():
     return hex_string  # returns our input to pass on later
 
 def fixkey():
-    while True:
-        key = input("Enter a key: ")
-        if key == "":
-            print("Invalid Key")
-        else:
-            break
+    #users key entery
+    key = input("Enter a key: ")
+    #users phrase entry
     string = input("Enter a message:")
-    fixed_key = key * (len(string) // len(key)) + key[:len(string) % len(key)]
+    #strips the input of spaces to get the key length
+    stripped_string = string.replace(" ", "")
+    #sets the key length to the amount of characters in the message
+    fixed_key = key * (len(stripped_string) // len(key)) + key[:len(stripped_string) % len(key)]
+    #holds the string for adding spaces to the key
+    temp = string
+    #loop to add spaces to the key
+    for i in temp:
+        #check if the index in i is a space
+        if i == " ":
+            #sets the index value to space
+            space = temp.index(i)
+            #addes a space after the index value from temp, then adds the rest of the key back after that index
+            fixed_key = fixed_key[:space] + " " + fixed_key[:(len(fixed_key)-space)]
+            #changes spaces to . in temp so the next space index will change
+            temp = temp.replace(" ", ".", 1)
     return string, fixed_key
 
 
@@ -199,7 +211,7 @@ def subkeyencript(string):
             # for loop to convert the letter in the input to a number
             for i in string:
                 position = library.find(i)
-                # sets the position of the desired letter by taking away the value of counter from the position
+                # sets the position of the desired letter by adding the value of counter from the position
                 new_letter = position + shift
                 if new_letter > 25:
                     new_letter = new_letter % 26
