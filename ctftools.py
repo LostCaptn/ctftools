@@ -26,7 +26,7 @@ def options():
     6. Rot(N)
     7. Vigenere
     8. Brute Forcer (Will try every cipher)
-    8. Exit
+    9. Exit
     """
     while True:
         print(menu)
@@ -87,31 +87,23 @@ def hexvalidator():
             hextest = int(hex_string, 16) #verifies that the string can convert to hex
             hex_string = temp
             break
-        except ValueError:
-            print("That is not a hex number, please input only hex.")
+        except Exception as e:
+            print(f"Invalid Enter: {e}")
     return hex_string  # returns our input to pass on later
 
 def fixkey():
-    #users key entery
     key = input("Enter a key: ")
-    #users phrase entry
     string = input("Enter a message:")
-    #strips the input of spaces to get the key length
     stripped_string = string.replace(" ", "")
-    #sets the key length to the amount of characters in the message
     fixed_key = key * (len(stripped_string) // len(key)) + key[:len(stripped_string) % len(key)]
-    #holds the string for adding spaces to the key
-    temp = string
-    #loop to add spaces to the key
+    temp = string.lower()
     for i in temp:
-        #check if the index in i is a space
-        if i == " ":
-            #sets the index value to space
+        if not i.isalpha():
             space = temp.index(i)
-            #addes a space after the index value from temp, then adds the rest of the key back after that index
-            fixed_key = fixed_key[:space] + " " + fixed_key[:(len(fixed_key)-space)]
-            #changes spaces to . in temp so the next space index will change
-            temp = temp.replace(" ", ".", 1)
+            fixed_key = fixed_key[:space] + " " + fixed_key[space:]
+            temp = temp.replace(i, "A", 1)
+            print(temp)
+    print(temp)
     return string, fixed_key
 
 
