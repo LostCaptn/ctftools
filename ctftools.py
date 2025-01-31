@@ -24,7 +24,8 @@ def options():
     4. Substitution Cipher
     5. Hexadecimal
     6. Rot(N)
-    7. Brute Forcer (Will try every cipher)
+    7. Vigenere
+    8. Brute Forcer (Will try every cipher)
     8. Exit
     """
     while True:
@@ -49,12 +50,59 @@ def options():
             rot_n_main()
             break
         elif action == "7":
-            bruteforcermain()
+            vigeneremain()
         elif action == "8":
+            bruteforcermain()
+        elif action == "9":
             return
         else:
             print("I'm sorry, that option isn't available right now")
     uestools()
+
+
+
+#--------------------------------------------------VALIDATORS----------------------------------------------------------
+
+def octetvalidator(): #validates the input
+    while True:
+        octet_str = input("Enter the octet: ")
+        try:
+            octettest = int(octet_str, 2) #verifies that the string can convert to binary
+        except ValueError:
+            print("That is not a binary number, please input only binary.")
+        if len(octet_str) == 8: #verifies that the input is exactly 8 characters
+            break
+        else:
+            print("That is not a valid octet")
+    return octet_str #returns our input to pass on later
+
+def hexvalidator():
+    while True:
+        hex_string = input("Enter a hexadecimal string: ")
+        temp = hex_string
+        hex_string = hex_string.replace(".", " ")
+        hex_string = hex_string.replace(" ", "")
+        hex_string = hex_string.lower()
+        try:
+            hextest = int(hex_string, 16) #verifies that the string can convert to hex
+            hex_string = temp
+            break
+        except ValueError:
+            print("That is not a hex number, please input only hex.")
+    return hex_string  # returns our input to pass on later
+
+def fixkey():
+    while True:
+        key = input("Enter a key: ")
+        if key == "":
+            print("Invalid Key")
+        else:
+            break
+    string = input("Enter a message:")
+    fixed_key = key * (len(string) // len(key)) + key[:len(string) % len(key)]
+    return string, fixed_key
+
+
 
 
 
@@ -244,35 +292,46 @@ def rot47decode(string):
     except Exception as e:
         return e
 
-#--------------------------------------------------VALIDATORS----------------------------------------------------------
-
-def octetvalidator(): #validates the input
-    while True:
-        octet_str = input("Enter the octet: ")
-        try:
-            octettest = int(octet_str, 2) #verifies that the string can convert to binary
-        except ValueError:
-            print("That is not a binary number, please input only binary.")
-        if len(octet_str) == 8: #verifies that the input is exactly 8 characters
-            break
+def vigenereencode(string, key):
+    encrypted = ""
+    print(string)
+    for i in range(len(string)):
+        print(i) #debug
+        if string[i].isalpha():
+            # removing the ordinal number for A brings the shift in 0-25 terms
+            print(ord(key[i]))
+            shift = ord(key[i].upper()) - ord('A')
+            if string[i].isupper():
+                # we take away ord('A') here for wrapping, so we can modulo our shift correctly
+                encrypted += chr((ord(string[i]) + shift - ord('A')) % 26 + ord('A'))
+            else:
+                encrypted += chr((ord(string[i]) + shift - ord('a')) % 26 + ord('a'))
         else:
-            print("That is not a valid octet")
-    return octet_str #returns our input to pass on later
+            if string[i] == " ":
+                encrypted += " "
+            else:
+                encrypted += string[i]
+    return encrypted
 
-def hexvalidator():
-    while True:
-        hex_string = input("Enter a hexadecimal string: ")
-        temp = hex_string
-        hex_string = hex_string.replace(".", " ")
-        hex_string = hex_string.replace(" ", "")
-        hex_string = hex_string.lower()
-        try:
-            hextest = int(hex_string, 16) #verifies that the string can convert to hex
-            hex_string = temp
-            break
-        except ValueError:
-            print("That is not a hex number, please input only hex.")
-    return hex_string  # returns our input to pass on later
+def vigeneredecode(string, key):
+    decrypted = ""
+    for i in range(len(string)):
+        if string[i].isalpha():
+            # removing the ordinal number for A brings the shift in 0-25 terms
+            shift = ord(key[i].upper()) - ord('A')
+            if string[i].isupper():
+                #we take away ord('A') here for wrapping, so we can modulo our shift correctly
+                decrypted += chr((ord(string[i]) - shift - ord('A')) % 26 + ord('A'))
+            else:
+                decrypted += chr((ord(string[i]) - shift - ord('a')) % 26 + ord('a'))
+        else:
+            if string[i] == " ":
+                decrypted += " "
+            else:
+                decrypted += string[i]
+    return decrypted
+
+
 
 
 #--------------------------------------------------MAIN FUNCTIONS_______________________________________________________
@@ -404,6 +463,26 @@ def rot_n_main():
             return
         else:
             print("That is not a valid response")
+
+def vigeneremain():
+    menu = "Please choose a function: \n 1. Encode \n 2. Decode \n 3. Exit"
+    print(menu)
+    while True:
+        action = input("Enter a number: ")
+        if action == "1":
+            string, key = fixkey()
+            encoded = vigenereencode(string, key)
+            print(f"Encoded message: {encoded}")
+            print(menu)
+        elif action == "2":
+            string, key = fixkey()
+            decoded = vigeneredecode(string, key)
+            print(f"Decoded message: {decoded}")
+            print(menu)
+        elif action == "3":
+            return
+        else:
+            print("Invalid input")
 
 def uestools():
     while True:
