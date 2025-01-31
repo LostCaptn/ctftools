@@ -102,8 +102,6 @@ def fixkey():
             space = temp.index(i)
             fixed_key = fixed_key[:space] + " " + fixed_key[space:]
             temp = temp.replace(i, "A", 1)
-            print(temp)
-    print(temp)
     return string, fixed_key
 
 
@@ -494,7 +492,7 @@ def uestools():
         if user_continue in ["Y" , "y"]:
             options()
             return
-        elif user_continue == "n":
+        elif user_continue in ["n", "N"]:
             return
         else:
             print("Invalid option")
