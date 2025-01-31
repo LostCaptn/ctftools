@@ -296,12 +296,9 @@ def rot47decode(string):
 
 def vigenereencode(string, key):
     encrypted = ""
-    print(string)
     for i in range(len(string)):
-        print(i) #debug
         if string[i].isalpha():
             # removing the ordinal number for A brings the shift in 0-25 terms
-            print(ord(key[i]))
             shift = ord(key[i].upper()) - ord('A')
             if string[i].isupper():
                 # we take away ord('A') here for wrapping, so we can modulo our shift correctly
