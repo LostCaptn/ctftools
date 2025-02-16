@@ -3,8 +3,10 @@ Christian Nelson
 22 Jan 2025
 Common CTF Cipher Decoder
 """
+
 import base64
 import codecs
+
 banner = r"""
 _______________________________ ________                          .___            
 \_   ___ \__    ___/\_   _____/ \______ \   ____   ____  ____   __| _/___________ 
@@ -60,21 +62,22 @@ def options():
     uestools()
 
 
+# --------------------------------------------------VALIDATORS----------------------------------------------------------
 
-#--------------------------------------------------VALIDATORS----------------------------------------------------------
 
-def octetvalidator(): #validates the input
+def octetvalidator():  # validates the input
     while True:
         octet_str = input("Enter the octet: ")
         try:
-            octettest = int(octet_str, 2) #verifies that the string can convert to binary
+            int(octet_str, 2)  # verifies that the string can convert to binary
         except ValueError:
             print("That is not a binary number, please input only binary.")
-        if len(octet_str) == 8: #verifies that the input is exactly 8 characters
+        if len(octet_str) == 8:  # verifies that the input is exactly 8 characters
             break
         else:
             print("That is not a valid octet")
-    return octet_str #returns our input to pass on later
+    return octet_str  # returns our input to pass on later
+
 
 def hexvalidator():
     while True:
@@ -84,18 +87,22 @@ def hexvalidator():
         hex_string = hex_string.replace(" ", "")
         hex_string = hex_string.lower()
         try:
-            hextest = int(hex_string, 16) #verifies that the string can convert to hex
+            int(hex_string, 16)  # verifies that the string can convert to hex
             hex_string = temp
             break
         except Exception as e:
             print(f"Invalid Enter: {e}")
     return hex_string  # returns our input to pass on later
 
+
 def fixkey():
     key = input("Enter a key: ")
     string = input("Enter a message:")
     stripped_string = string.replace(" ", "")
-    fixed_key = key * (len(stripped_string) // len(key)) + key[:len(stripped_string) % len(key)]
+    fixed_key = (
+        key * (len(stripped_string) // len(key))
+        + key[: len(stripped_string) % len(key)]
+    )
     temp = string.lower()
     for i in temp:
         if not i.isalpha():
@@ -105,28 +112,29 @@ def fixkey():
     return string, fixed_key
 
 
+# ---------------------------------------------DECODERS---------------------------------------------------------------
 
-
-
-#---------------------------------------------DECODERS---------------------------------------------------------------
 
 def base64decoder(string):
     try:
-        return base64.b64decode(string.encode('ascii')).decode('ascii')
+        return base64.b64decode(string.encode("ascii")).decode("ascii")
     except Exception as e:
         return e
+
 
 def base64encoder(string):
     try:
-        return base64.b64encode(string.encode("ascii")).decode('ascii')
+        return base64.b64encode(string.encode("ascii")).decode("ascii")
     except Exception as e:
         return e
 
+
 def base32decoder(string):
     try:
-        return base64.b32decode(string.encode('ascii')).decode('ascii')
+        return base64.b32decode(string.encode("ascii")).decode("ascii")
     except Exception as e:
         return e
+
 
 def subbruteforce(string):
     library = "abcdefghijklmnopqrstuvwxyz"
@@ -140,7 +148,9 @@ def subbruteforce(string):
             result = ""
             # for loop to convert the letter in the input to a number
             for i in string:
-                position = library.find(i) # sets the position of the desired letter by taking away the value of counter from the position
+                position = library.find(
+                    i
+                )  # sets the position of the desired letter by taking away the value of counter from the position
                 new_letter = position - shift
                 upper_position = library_upper.find(i)
                 new_upper = upper_position - shift
@@ -151,7 +161,9 @@ def subbruteforce(string):
                 elif i in library_upper:
                     result = result + library_upper[new_upper]
                 else:
-                    result = result + i # if the input character is not within letters, we add it to the string as normal
+                    result = (
+                        result + i
+                    )  # if the input character is not within letters, we add it to the string as normal
             if string == result:
                 result = "Not a substitution cipher."
                 print(result)
@@ -161,6 +173,7 @@ def subbruteforce(string):
                 print(f"Your decrypted message is: {result}")
     except Exception as e:
         print(e)
+
 
 def subkeydecript(string):
     library = "abcdefghijklmnopqrstuvwxyz"
@@ -185,9 +198,10 @@ def subkeydecript(string):
                 result = "Not a substitution cipher."
                 return result
             else:
-                return key,result
+                return key, result
     except Exception as e:
         return e
+
 
 def subkeyencript(string):
     library = "abcdefghijklmnopqrstuvwxyz"
@@ -195,7 +209,7 @@ def subkeyencript(string):
     try:
         while True:
             key = input("Enter a key: ")
-            #string = string.lower()
+            # string = string.lower()
             shift = int(key)
             result = ""
             # for loop to convert the letter in the input to a number
@@ -222,9 +236,10 @@ def subkeyencript(string):
                 result = "Not a substitution cipher."
                 return result
             else:
-                return key,result
+                return key, result
     except Exception as e:
         return e
+
 
 def hex2ascii(string):
     library = "0123456789abcdef"
@@ -250,6 +265,7 @@ def hex2ascii(string):
     except Exception as e:
         return e
 
+
 def hex2dec(string):
     library = "0123456789abcdef"
     dec_string = ""
@@ -274,11 +290,13 @@ def hex2dec(string):
     except Exception as e:
         return e
 
+
 def rot13decode(string):
     try:
-        return codecs.encode(string, 'rot13')
+        return codecs.encode(string, "rot13")
     except Exception as e:
         return f"Invalid Input: {e}"
+
 
 def rot47decode(string):
     try:
@@ -289,22 +307,23 @@ def rot47decode(string):
                 # decode left 47, account for negative 33, wrap %94
                 x.append(chr(33 + ((j - 47 - 33) % 94)))
             else:
-                x.append(string[i])  #adds non ROT47 characters without changes
-        return ''.join(x)  # turns the list into a string
+                x.append(string[i])  # adds non ROT47 characters without changes
+        return "".join(x)  # turns the list into a string
     except Exception as e:
         return e
+
 
 def vigenereencode(string, key):
     encrypted = ""
     for i in range(len(string)):
         if string[i].isalpha():
             # removing the ordinal number for A brings the shift in 0-25 terms
-            shift = ord(key[i].upper()) - ord('A')
+            shift = ord(key[i].upper()) - ord("A")
             if string[i].isupper():
                 # we take away ord('A') here for wrapping, so we can modulo our shift correctly
-                encrypted += chr((ord(string[i]) + shift - ord('A')) % 26 + ord('A'))
+                encrypted += chr((ord(string[i]) + shift - ord("A")) % 26 + ord("A"))
             else:
-                encrypted += chr((ord(string[i]) + shift - ord('a')) % 26 + ord('a'))
+                encrypted += chr((ord(string[i]) + shift - ord("a")) % 26 + ord("a"))
         else:
             if string[i] == " ":
                 encrypted += " "
@@ -312,17 +331,18 @@ def vigenereencode(string, key):
                 encrypted += string[i]
     return encrypted
 
+
 def vigeneredecode(string, key):
     decrypted = ""
     for i in range(len(string)):
         if string[i].isalpha():
             # removing the ordinal number for A brings the shift in 0-25 terms
-            shift = ord(key[i].upper()) - ord('A')
+            shift = ord(key[i].upper()) - ord("A")
             if string[i].isupper():
-                #we take away ord('A') here for wrapping, so we can modulo our shift correctly
-                decrypted += chr((ord(string[i]) - shift - ord('A')) % 26 + ord('A'))
+                # we take away ord('A') here for wrapping, so we can modulo our shift correctly
+                decrypted += chr((ord(string[i]) - shift - ord("A")) % 26 + ord("A"))
             else:
-                decrypted += chr((ord(string[i]) - shift - ord('a')) % 26 + ord('a'))
+                decrypted += chr((ord(string[i]) - shift - ord("a")) % 26 + ord("a"))
         else:
             if string[i] == " ":
                 decrypted += " "
@@ -331,9 +351,7 @@ def vigeneredecode(string, key):
     return decrypted
 
 
-
-
-#--------------------------------------------------MAIN FUNCTIONS_______________________________________________________
+# --------------------------------------------------MAIN FUNCTIONS_______________________________________________________
 def bruteforcermain():
     string = input("Enter a string to be tested: ")
     result = base32decoder(string)
@@ -350,7 +368,7 @@ def bruteforcermain():
     print(f"Hex2ASCII: {result}")
     while True:
         action = input("Would you like to view the substitution brute force? Y/n: ")
-        if action in ["Y" , "y"]:
+        if action in ["Y", "y"]:
             subbruteforce(string)
             break
         elif action == "n":
@@ -359,12 +377,14 @@ def bruteforcermain():
             print("That's not a valid option")
     return
 
+
 def base32main():
     while True:
         string = input("Enter a base32 string to decode: ")
         decoded = base32decoder(string)
         print(f"Decoded string: {decoded}")
         return
+
 
 def base64main():
     action = input("Choose an option: \n 1. Encode \n 2. Decode \n 3. Exit \n")
@@ -384,9 +404,12 @@ def base64main():
         print("I'm sorry, that's not a valid option.")
         base64main()
 
+
 def ipv4decoder():
-    new_octet = octetvalidator() #assigns the output to a variable
-    first_octet = convert2decimal(new_octet) #assigns variable to the output of new_octet being passed into converter
+    new_octet = octetvalidator()  # assigns the output to a variable
+    first_octet = convert2decimal(
+        new_octet
+    )  # assigns variable to the output of new_octet being passed into converter
     print(first_octet)
     new_octet = octetvalidator()
     second_octet = convert2decimal(new_octet)
@@ -397,15 +420,21 @@ def ipv4decoder():
     new_octet = octetvalidator()
     fourth_octet = convert2decimal(new_octet)
     print(fourth_octet)
-    print(f"The IPV4 address is {first_octet}.{second_octet}.{third_octet}.{fourth_octet}")
+    print(
+        f"The IPV4 address is {first_octet}.{second_octet}.{third_octet}.{fourth_octet}"
+    )
+
 
 def convert2decimal(new_octet):
-    new_dec = int(new_octet, 2) #converts the binary to decimal form using int()
-    return new_dec #returns the input to pass on for printing
+    new_dec = int(new_octet, 2)  # converts the binary to decimal form using int()
+    return new_dec  # returns the input to pass on for printing
+
 
 def subciphermain():
     string = input("Enter the string: ")
-    action = input("Enter a Number: \n 1. Encode \n 2. Decode \n 3. Brute Force \n 4. Exit \n Option: ")
+    action = input(
+        "Enter a Number: \n 1. Encode \n 2. Decode \n 3. Brute Force \n 4. Exit \n Option: "
+    )
     if action == "1":
         result = subkeyencript(string)
         print(f"Your encrypted message: {result}")
@@ -423,6 +452,7 @@ def subciphermain():
         print("I'm sorry, that's not a valid option.")
         subciphermain()
 
+
 def hexmain():
     print("Choose from the following options:\n 1. Hex to Decimal\n 2. Hex to ASCII\n")
     option = input("Enter a number: ")
@@ -435,15 +465,18 @@ def hexmain():
         ascii_string = hex2ascii(new_hex)
         print("Hex value in ASCII: ", ascii_string)
 
+
 def rot13main():
     string = input("Enter a string to encode/decode: ")
     result = rot13decode(string)
     print(f"Your message is: {result}")
 
+
 def rot47main():
     string = input("Enter a ROT47 string: ")
     result = rot47decode(string)
     print(f"Your message is: {result}")
+
 
 def rot_n_main():
     print("""
@@ -462,6 +495,7 @@ def rot_n_main():
             return
         else:
             print("That is not a valid response")
+
 
 def vigeneremain():
     menu = "Please choose a function: \n 1. Encode \n 2. Decode \n 3. Exit"
@@ -483,10 +517,11 @@ def vigeneremain():
         else:
             print("Invalid input")
 
+
 def uestools():
     while True:
         user_continue = input("Would you like to continue? Y/n: ")
-        if user_continue in ["Y" , "y"]:
+        if user_continue in ["Y", "y"]:
             options()
             return
         elif user_continue in ["n", "N"]:
@@ -494,8 +529,7 @@ def uestools():
         else:
             print("Invalid option")
 
-#-----------------------------------------------CODE EXECUTION----------------------------------------------------------
+
+# -----------------------------------------------CODE EXECUTION----------------------------------------------------------
 print(banner)
 options()
-
-
